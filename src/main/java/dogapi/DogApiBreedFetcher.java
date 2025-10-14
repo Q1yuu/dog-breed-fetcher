@@ -3,9 +3,9 @@ package dogapi;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.*;
 
@@ -32,15 +32,21 @@ public class DogApiBreedFetcher implements BreedFetcher {
             if (!response.isSuccessful()) {
                 throw new BreedNotFoundException(breed);
             }
-            String responseBody = response.body().string();
-            JSONObject json = new JSONObject(responseBody);
+//            String responseBody = response.body().string();
+//            JSONObject json = new JSONObject(responseBody);
+            ResponseBody rspBody = response.body();
+            if (rspBody == null) {
+                throw new BreedNotFoundException(breed);
+            }
+            String responseBody = rspBody.string();
+            JSONObject responseJson = new JSONObject(responseBody);
 
-            String status = json.getString("status");
+            String status = responseJson.getString("status");
             if (!status.equals("success")) {
                 throw new BreedNotFoundException(breed);
             }
 
-            JSONArray subBreedsArray = json.getJSONArray("message");
+            JSONArray subBreedsArray = responseJson.getJSONArray("message");
             List<String> subBreeds = new ArrayList<>();
             for (int i = 0; i < subBreedsArray.length(); i++) {
                 subBreeds.add(subBreedsArray.getString(i));
