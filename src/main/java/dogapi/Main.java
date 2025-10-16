@@ -30,7 +30,6 @@ public class Main {
             return subBreeds.size();
         }catch (BreedFetcher.BreedNotFoundException e) {
             return 0;
-            // modification on the Main
         }
     }
 }
